@@ -2,35 +2,31 @@
 
 # Strader 📈
 
-### The Virtual Equity Trading Simulator
+### The Real-Time Crypto Arbitrage Monitor
 
-> A full-stack MERN application for executing paper trades in real-time using live market data.
+> A full-stack application for monitoring Bitcoin arbitrage spreads between Binance and Kraken in real-time.
 
 ---
 
-<!-- <img src="https://via.placeholder.com/800x400?text=Demo+GIF+Coming+Soon+-+Showing+Real-time+Buy/Sell" alt="Strader Demo" width="800px" />
-
---- -->
-
-### ⚡ Built With MERN Stack ⚡
+### ⚡ Built With NER Stack (Node, Express, React) ⚡
 
 <p align="center">
   <a href="https://reactjs.org/" target="_blank" rel="noreferrer"> <img src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB" alt="React" /> </a>
   <a href="https://nodejs.org/en/" target="_blank" rel="noreferrer"> <img src="https://img.shields.io/badge/node.js-%2343853D.svg?style=for-the-badge&logo=node.js&logoColor=white" alt="NodeJS" /> </a>
   <a href="https://expressjs.com/" target="_blank" rel="noreferrer"> <img src="https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB" alt="Express.js" /> </a>
-  <a href="https://www.mongodb.com/" target="_blank" rel="noreferrer"> <img src="https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" /> </a>
-  <a href="https://tailwindcss.com/" target="_blank" rel="noreferrer"> <img src="https://img.shields.io/badge/c-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="TailwindCSS" /> </a>
+  <a href="https://vitejs.dev/" target="_blank" rel="noreferrer"> <img src="https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" /> </a>
 </p>
 
 </div>
 
 ## 🎯 Project Core
 
-Strader is designed to simulate the transactional flow of a brokerage account without financial risk. It proves full-stack capability by handling real-time data fetching on the frontend and secure transactional state management on the backend.
+Strader is designed to identify "risk-free" profit opportunities by tracking price discrepancies across major crypto exchanges. It proves full-stack capability by handling high-frequency data fetching on the backend and visualizing complex financial data on the frontend.
 
 ##  Essential Features
 
-* **💵 Virtual Liquidity Pool:** Users start with a simulated $10,000 USD balance.
-* **🚀 Live Market Execution:** Integrates with financial APIs to execute buy/sell orders at real-time prices.
-* **🔒 Transaction Persistence:** All trades are logged immutably in MongoDB for historical tracking.
-* **📊 Dynamic Portfolio:** Real-time dashboard showing current asset holdings and total portfolio value.
+* **💵 Live Arbitrage Detection:** Instantly calculates price spreads between Binance and Kraken.
+* **🚀 Real-Time Polling:** Fetches public market data every 3 seconds without rate limiting (CCXT).
+* **📉 Spread Analysis:** Automatically highlights profitable trade scenarios (Green) vs losses (Red).
+* **🌑 Financial Terminal UI:** A professional, matte-black dashboard optimized for data readability (Vanilla CSS).
+* **📊 Net Profit Calculation:** Estimates real-world returns by accounting for exchange trading fees (0.2%).
