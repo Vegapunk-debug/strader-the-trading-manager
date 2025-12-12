@@ -1,0 +1,1 @@
+# strader-the-trading-manager
