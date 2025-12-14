@@ -12,35 +12,66 @@ function App() {
 
 
   useEffect(() => {
-
-    const fetchData = async () => {
-
+    let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001'
+    API_URL = API_URL.replace(/\/$/, '')
+  
+    const fetchLive = async () => {
       try {
-        let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001'
-
-        API_URL = API_URL.replace(/\/$/, '')
-        API_URL = API_URL.replace(/\/api\/arbitrage$/, '')
-
-        const [liveRes, historyRes] = await Promise.all([
-          axios.get(`${API_URL}/api/arbitrage`),
-          axios.get(`${API_URL}/api/history`)
-        ]);
-
-        setData(liveRes.data)
-        setHistoryData(historyRes.data)
+        const res = await axios.get(`${API_URL}/api/arbitrage`)
+        setData(res.data)
         setError(null)
-      }
-      catch (err) {
+      } catch (err) {
         console.error(err)
-        setError('Failed to fetch data. Check the console !!!')
+        setError('Failed to fetch live data')
       }
     }
-
-    fetchData()
-
-    const interval = setInterval(fetchData, 3000)
+  
+    const fetchHistory = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/api/history`)
+        setHistoryData(res.data)
+      } catch (err) {
+        console.error(err)
+      }
+    }
+  
+    fetchLive()
+    fetchHistory() 
+  
+    const interval = setInterval(fetchLive, 3000)
     return () => clearInterval(interval)
   }, [])
+  
+  // useEffect(() => {
+
+  //   const fetchData = async () => {
+
+  //     try {
+  //       let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001'
+
+  //       API_URL = API_URL.replace(/\/$/, '')
+  //       API_URL = API_URL.replace(/\/api\/arbitrage$/, '')
+
+  //       const [liveRes, historyRes] = await Promise.all([
+  //         axios.get(`${API_URL}/api/arbitrage`),
+  //         axios.get(`${API_URL}/api/history`)
+  //       ]);
+
+  //       setData(liveRes.data)
+  //       setHistoryData(historyRes.data)
+  //       setError(null)
+  //     }
+  //     catch (err) {
+  //       console.error(err)
+  //       setError('Failed to fetch data. Check the console !!!')
+  //     }
+  //   }
+
+  //   fetchData()
+
+  //   const interval = setInterval(fetchData, 3000)
+  //   return () => clearInterval(interval)
+  // }, [])
 
   if (error)
     return <div className="screen-center error">{error}</div>
