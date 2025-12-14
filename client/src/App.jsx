@@ -16,7 +16,10 @@ function App() {
     const fetchData = async () => {
 
       try {
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001'
+        let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001'
+
+        API_URL = API_URL.replace(/\/$/, '')
+        API_URL = API_URL.replace(/\/api\/arbitrage$/, '')
 
         const [liveRes, historyRes] = await Promise.all([
           axios.get(`${API_URL}/api/arbitrage`),
