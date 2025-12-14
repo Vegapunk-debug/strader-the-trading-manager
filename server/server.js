@@ -61,8 +61,44 @@ app.get('/api/arbitrage', async (req, res) => {
     }
 });
 
+app.get('/api/history', async (req, res) => {
+    try {
+        console.log("Fetching data...")
+
+        const binanceHistory = await binance.fetchOHLCV('BTC/USDT', '1h', undefined, 24)
+        const krakenHistory = await kraken.fetchOHLCV('BTC/USDT', '1h', undefined, 24)
+
+        const graphData = []
+
+        for (let i = 0; i < binanceHistory.length; i++) {
+            const candleB = binanceHistory[i]
+            const candleK = krakenHistory[i]
+
+            if (candleB && candleK) {
+                const timestamp = candleB[0]
+                const priceBinance = candleB[4]
+                const priceKraken = candleK[4]
+
+                const spread = Math.abs(priceBinance - priceKraken)
+
+        graphData.push({
+                    time: new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '0-digit' }),
+                    spread: spread,
+                    binance: priceBinance,
+                    kraken: priceKraken
+                })
+            }
+        }
+        res.status(200).json(graphData)
+        
+    } catch (error) {
+        console.error('Error fetching history:', error)
+        res.status(500).json([{ error: 'Failed to fetch history data' }])
+    }
+})
+
 
 app.listen(Port, () => {
-    console.log(`Server running on http://localhost:${Port}`);
+    console.log(`Server running on http://localhost:${Port}`)
 })
 
