@@ -82,7 +82,7 @@ app.get('/api/history', async (req, res) => {
                 const spread = Math.abs(priceBinance - priceKraken)
 
         graphData.push({
-                    time: new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '0-digit' }),
+                    time: new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                     spread: spread,
                     binance: priceBinance,
                     kraken: priceKraken

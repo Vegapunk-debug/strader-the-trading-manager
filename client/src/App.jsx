@@ -2,22 +2,29 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import logo from './assets/logo.png'
 import './App.css'
+import Chart from './components/Chart'
 
 function App() {
 
   const [data, setData] = useState(null)
   const [error, setError] = useState(null)
+  const [historyData, setHistoryData] = useState([])
 
 
   useEffect(() => {
 
     const fetchData = async () => {
-    
-      try {
 
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api/arbitrage'
-        const response = await axios.get(API_URL)
-        setData(response.data)
+      try {
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001'
+
+        const [liveRes, historyRes] = await Promise.all([
+          axios.get(`${API_URL}/api/arbitrage`),
+          axios.get(`${API_URL}/api/history`)
+        ]);
+
+        setData(liveRes.data)
+        setHistoryData(historyRes.data)
         setError(null)
       }
       catch (err) {
@@ -60,6 +67,15 @@ function App() {
         <ArbitrageCard scenario={data.scenarios.A} label="SCENARIO A" />
         <ArbitrageCard scenario={data.scenarios.B} label="SCENARIO B" />
       </div>
+
+      {historyData.length > 0 && (
+        <div className="chart-container">
+          <h3 className="chart-title">BINANCE VS KRAKEN PRICES (24H)</h3>
+          <div className="chart-wrapper">
+            <Chart data={historyData} />
+          </div>
+        </div>
+      )}
 
       <footer className="footer">
         <p>&copy; {new Date().getFullYear()} Strader. All rights reserved.</p>
