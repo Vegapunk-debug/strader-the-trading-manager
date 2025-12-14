@@ -19,14 +19,41 @@
 
 </div>
 
-## 🎯 Project Core
+## Project Core
 
 Strader is designed to identify "risk-free" profit opportunities by tracking price discrepancies across major crypto exchanges. It proves full-stack capability by handling high-frequency data fetching on the backend and visualizing complex financial data on the frontend.
 
-##  Essential Features
+## Essential Features
 
 * **💵 Live Arbitrage Detection:** Instantly calculates price spreads between Binance and Kraken.
 * **🚀 Real-Time Polling:** Fetches public market data every 3 seconds without rate limiting (CCXT).
 * **📉 Spread Analysis:** Automatically highlights profitable trade scenarios (Green) vs losses (Red).
 * **🌑 Financial Terminal UI:** A professional, matte-black dashboard optimized for data readability (Vanilla CSS).
 * **📊 Net Profit Calculation:** Estimates real-world returns by accounting for exchange trading fees (0.2%).
+
+---
+
+## Getting Started
+
+Follow these steps to set up and run the project locally:
+
+### Prerequisites
+
+Ensure you have the following installed:
+
+- **Node.js** (v16 or higher)
+- **npm** (Node Package Manager)
+- **Vite** (for frontend development)
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/your-username/strader.git
+   cd client
+   npm run dev: Starts the frontend development server.
+   cd ..
+   cd server
+   npm start:  Starts the backend server.
+   
