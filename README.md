@@ -22,22 +22,22 @@
 
 ---
 
-## 📌 Project Overview
+## Project Overview
 
 **Strader** is a quantitative finance tool designed to identify "risk-free" profit opportunities by tracking price discrepancies across major crypto exchanges. Unlike standard trackers, Strader focuses on the **execution reality** of arbitrage—accounting for bid/ask spreads and exchange fees to calculate the *true* net profit.
 
 This project demonstrates full-stack capability by handling high-frequency data fetching on the backend (using CCXT) and visualizing complex financial data on a React frontend with low latency.
 
-### 🎯 Key Features
-* **⚡ Real-Time Arbitrage Detection:** Polls market data every 3 seconds to capture fleeting price differences.
-* **📉 Bid/Ask Spread Analysis:** Calculates spreads based on actual order book depth (Ask vs. Bid), not just last traded price.
-* **💰 Net Profit Estimation:** Automatically deducts a 0.2% trading fee (0.1% buy + 0.1% sell) to show realistic ROI.
-* **📊 24-Hour History:** Visualizes spread volatility over time using OHLCV data.
-* **🌑 Financial Terminal UI:** A professional, dark-mode dashboard designed for long-session monitoring.
+### Key Features
+* **Real-Time Arbitrage Detection:** Polls market data every 3 seconds to capture fleeting price differences.
+* **Bid/Ask Spread Analysis:** Calculates spreads based on actual order book depth (Ask vs. Bid), not just last traded price.
+* **Net Profit Estimation:** Automatically deducts a 0.2% trading fee (0.1% buy + 0.1% sell) to show realistic ROI.
+* **24-Hour History:** Visualizes spread volatility over time using OHLCV data.
+* **Financial Terminal UI:** A professional, dark-mode dashboard designed for long-session monitoring.
 
 ---
 
-## ⚙️ The Arbitrage Model (Math)
+## The Arbitrage Model (Math)
 
 To ensure trading viability, Strader uses the following logic to detect opportunities between Binance and Kraken:
 
@@ -57,7 +57,7 @@ $$Net\% = \left( \frac{Spread}{BuyPrice} \times 100 \right) - 0.2\%$$
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Component | Technology | Description |
 | :--- | :--- | :--- |
@@ -82,7 +82,7 @@ strader/
     └── package.json        # Dependencies
 ```
     
-## 🚀 Getting Started
+## Getting Started
 
 Follow these instructions to set up the project locally on your machine.
 
