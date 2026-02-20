@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import logo from './assets/logo.png'
 import './App.css'
@@ -9,23 +9,42 @@ function App() {
   const [data, setData] = useState(null)
   const [error, setError] = useState(null)
   const [historyData, setHistoryData] = useState([])
+  const prevPricesRef = useRef(null)
+  const [ticks, setTicks] = useState({ binance: null, kraken: null })
 
 
   useEffect(() => {
     let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001'
     API_URL = API_URL.replace(/\/$/, '')
-  
+
     const fetchLive = async () => {
       try {
         const res = await axios.get(`${API_URL}/api/arbitrage`)
+
+        if (prevPricesRef.current) {
+          console.log(prevPricesRef.current)
+          const prev = prevPricesRef.current
+          const current = res.data.prices
+          console.log(current)
+
+          setTicks((prevTicks) => ({
+            binance: current.binance.ask > prev.binance.ask ? 'up' : (current.binance.ask < prev.binance.ask ? 'down' : prevTicks.binance),
+            kraken: current.kraken.ask > prev.kraken.ask ? 'up' : (current.kraken.ask < prev.kraken.ask ? 'down' : prevTicks.kraken)
+          }))
+        }
+
+
+        prevPricesRef.current = res.data.prices
+
         setData(res.data)
         setError(null)
+        
       } catch (err) {
         console.error(err)
         setError('Failed to fetch live data')
       }
     }
-  
+
     const fetchHistory = async () => {
       try {
         const res = await axios.get(`${API_URL}/api/history`)
@@ -34,14 +53,14 @@ function App() {
         console.error(err)
       }
     }
-  
+
     fetchLive()
-    fetchHistory() 
-  
+    fetchHistory()
+
     const interval = setInterval(fetchLive, 3000)
     return () => clearInterval(interval)
   }, [])
-  
+
   // useEffect(() => {
 
   //   const fetchData = async () => {
@@ -92,9 +111,15 @@ function App() {
 
       <div className="ticker-tape">
         <span className="ticker-label">BTC/USDT {'>>'} </span>
-        <span className="exchange-price">BINANCE: <span className="price">${data.prices.binance.ask}</span></span>
+        <span className="exchange-price">
+          BINANCE: <span className="price">${data.prices.binance.ask}</span>
+          {ticks.binance && <span className={`tick ${ticks.binance}`}>{ticks.binance === 'up' ? '▲' : '▼'}</span>}
+        </span>
         <span className="separator">|</span>
-        <span className="exchange-price">KRAKEN: <span className="price">${data.prices.kraken.ask}</span></span>
+        <span className="exchange-price">
+          KRAKEN: <span className="price">${data.prices.kraken.ask}</span>
+          {ticks.kraken && <span className={`tick ${ticks.kraken}`}>{ticks.kraken === 'up' ? '▲' : '▼'}</span>}
+        </span>
       </div>
 
       <div className="cards-container">

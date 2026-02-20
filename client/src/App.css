@@ -98,6 +98,23 @@ header {
   color: var(--border-color);
 }
 
+.tick {
+  font-size: 0.8rem;
+  margin-left: 0.35rem;
+  transition: color 0.3s;
+  display: inline-block;
+}
+
+.tick.up {
+  color: var(--accent-green);
+  text-shadow: 0 0 5px rgba(0, 255, 157, 0.4);
+}
+
+.tick.down {
+  color: var(--accent-red);
+  text-shadow: 0 0 5px rgba(255, 77, 77, 0.4);
+}
+
 .cards-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
