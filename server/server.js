@@ -7,7 +7,7 @@ const Port = process.env.PORT || 5001
 
 app.use(cors())
 
-const binance = new ccxt.binance()
+const binance = new ccxt.binanceus() 
 const kraken = new ccxt.kraken()
 
 app.get('/api/arbitrage', async (req, res) => {
@@ -57,7 +57,7 @@ app.get('/api/arbitrage', async (req, res) => {
 
     } catch (error) {
         console.error('Error fetching data:', error)
-        res.status(500).json({ error: 'Failed to fetch market data' })
+        res.status(500).json({ error: error.message || 'Failed to fetch market data' })
     }
 });
 
@@ -81,7 +81,7 @@ app.get('/api/history', async (req, res) => {
 
                 const spread = Math.abs(priceBinance - priceKraken)
 
-        graphData.push({
+                graphData.push({
                     time: new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                     spread: spread,
                     binance: priceBinance,
@@ -90,10 +90,10 @@ app.get('/api/history', async (req, res) => {
             }
         }
         res.status(200).json(graphData)
-        
+
     } catch (error) {
         console.error('Error fetching history:', error)
-        res.status(500).json([{ error: 'Failed to fetch history data' }])
+        res.status(500).json([{ error: error.message || 'Failed to fetch history data' }])
     }
 })
 
