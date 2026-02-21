@@ -38,7 +38,7 @@ function App() {
 
         setData(res.data)
         setError(null)
-        
+
       } catch (err) {
         console.error(err)
         setError('Failed to fetch live data')
@@ -92,7 +92,7 @@ function App() {
   //   return () => clearInterval(interval)
   // }, [])
 
-  if (error)
+  if (!data && error)
     return <div className="screen-center error">{error}</div>
   if (!data)
     return <div className="screen-center loading">INITIALIZING FEED...</div>
@@ -102,12 +102,20 @@ function App() {
       <header>
         <img src={logo} alt="Strader Logo" className="logo" />
         <div className="status-indicator">
-          <span className="blink">●</span> LIVE
+
+          {error ? (
+            <span className="error-text">🔴 OFFLINE</span>
+          ) : (
+            <><span className="blink">●</span> LIVE</>
+          )}
+
         </div>
         <div className="timestamp">
           UPTIME: {new Date(data.timestamp).toLocaleTimeString()}
         </div>
       </header>
+
+
 
       <div className="ticker-tape">
         <span className="ticker-label">BTC/USDT {'>>'} </span>
