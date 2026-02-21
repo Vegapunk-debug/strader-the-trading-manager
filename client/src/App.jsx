@@ -108,14 +108,18 @@ function App() {
           ) : (
             <><span className="blink">●</span> LIVE</>
           )}
-
+          
         </div>
         <div className="timestamp">
           UPTIME: {new Date(data.timestamp).toLocaleTimeString()}
         </div>
       </header>
 
-
+      {error && data && (
+        <div className="error-banner">
+          ⚠️ Connection lost. Retrying...
+        </div>
+      )}
 
       <div className="ticker-tape">
         <span className="ticker-label">BTC/USDT {'>>'} </span>
