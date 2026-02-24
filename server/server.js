@@ -7,14 +7,22 @@ const Port = process.env.PORT || 5001
 
 app.use(cors())
 
-const binance = new ccxt.binanceus() 
-const kraken = new ccxt.kraken()
+const binance = new ccxt.binance({ 
+    enableRateLimit: true,
+    options: { 'defaultType': 'spot' } 
+})
+
+const kraken = new ccxt.kraken({ 
+    enableRateLimit: true 
+})
 
 app.get('/api/arbitrage', async (req, res) => {
     try {
+        const symbol = 'BTC/USDT'
+
         const [binanceTicker, krakenTicker] = await Promise.all([
-            binance.fetchTicker('BTC/USDT'),
-            kraken.fetchTicker('BTC/USDT')
+            binance.fetchTicker(symbol),
+            kraken.fetchTicker(symbol)
         ])
 
         const binanceAsk = binanceTicker.ask
@@ -56,8 +64,9 @@ app.get('/api/arbitrage', async (req, res) => {
         res.json(responseData)
 
     } catch (error) {
-        console.error('Error fetching data:', error)
-        res.status(500).json({ error: error.message || 'Failed to fetch market data' })
+        console.error('Arbitrage Fetch Error:', error.message)
+        const status = error.message.includes('DDoS') ? 429 : 500;
+        res.status(status).json({ error: error.message || 'Failed to fetch market data' })
     }
 });
 
@@ -65,35 +74,26 @@ app.get('/api/history', async (req, res) => {
     try {
         console.log("Fetching data...")
 
-        const binanceHistory = await binance.fetchOHLCV('BTC/USDT', '1h', undefined, 24)
-        const krakenHistory = await kraken.fetchOHLCV('BTC/USDT', '1h', undefined, 24)
+        const binanceHistory = await binance.fetchOHLCV(symbol, '1h', undefined, 24)
+        const krakenHistory = await kraken.fetchOHLCV(symbol, '1h', undefined, 24)
 
-        const graphData = []
-
-        for (let i = 0; i < binanceHistory.length; i++) {
-            const candleB = binanceHistory[i]
+        // const graphData = []
+        const graphData = binanceHistory.map((candleB, i) => {
             const candleK = krakenHistory[i]
+            if (!candleK) return null
 
-            if (candleB && candleK) {
-                const timestamp = candleB[0]
-                const priceBinance = candleB[4]
-                const priceKraken = candleK[4]
-
-                const spread = Math.abs(priceBinance - priceKraken)
-
-                graphData.push({
-                    time: new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                    spread: spread,
-                    binance: priceBinance,
-                    kraken: priceKraken
-                })
+            return {
+                time: new Date(candleB[0]).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                binance: candleB[4],
+                kraken: candleK[4],
+                spread: Math.abs(candleB[4] - candleK[4])
             }
-        }
-        res.status(200).json(graphData)
+        }).filter(item => item !== null)
 
+        res.status(200).json(graphData)
     } catch (error) {
-        console.error('Error fetching history:', error)
-        res.status(500).json([{ error: error.message || 'Failed to fetch history data' }])
+        console.error('History Fetch Error:', error.message)
+        res.status(500).json({ error: "Failed to fetch history" });
     }
 })
 

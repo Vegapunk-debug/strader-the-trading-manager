@@ -11,21 +11,20 @@ function App() {
   const [historyData, setHistoryData] = useState([])
   const prevPricesRef = useRef(null)
   const [ticks, setTicks] = useState({ binance: null, kraken: null })
-
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5001').replace(/\/$/, '')
 
   useEffect(() => {
-    let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001'
-    API_URL = API_URL.replace(/\/$/, '')
+    let isMounted = true
+    let timerId
 
     const fetchLive = async () => {
       try {
         const res = await axios.get(`${API_URL}/api/arbitrage`)
+        if (!isMounted) return;
 
         if (prevPricesRef.current) {
-          console.log(prevPricesRef.current)
           const prev = prevPricesRef.current
           const current = res.data.prices
-          console.log(current)
 
           setTicks((prevTicks) => ({
             binance: current.binance.ask > prev.binance.ask ? 'up' : (current.binance.ask < prev.binance.ask ? 'down' : prevTicks.binance),
@@ -33,64 +32,40 @@ function App() {
           }))
         }
 
-
         prevPricesRef.current = res.data.prices
-
         setData(res.data)
         setError(null)
-
       } catch (err) {
-        console.error(err)
-        setError('Failed to fetch live data')
+        console.error("Live fetch error:", err.message)
+        setError('Connection issues. Retrying...')
+      } finally {
+
+        if (isMounted) {
+          timerId = setTimeout(fetchLive, 5000)
+        }
       }
     }
 
     const fetchHistory = async () => {
       try {
         const res = await axios.get(`${API_URL}/api/history`)
-        setHistoryData(res.data)
+        if (isMounted) setHistoryData(res.data)
       } catch (err) {
-        console.error(err)
+        console.error("History fetch error:", err)
       }
     }
 
     fetchLive()
     fetchHistory()
 
-    const interval = setInterval(fetchLive, 3000)
-    return () => clearInterval(interval)
+    const historyInterval = setInterval(fetchHistory, 120000)
+
+    return () => {
+      isMounted = false
+      clearTimeout(timerId)
+      clearInterval(historyInterval)
+    }
   }, [])
-
-  // useEffect(() => {
-
-  //   const fetchData = async () => {
-
-  //     try {
-  //       let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001'
-
-  //       API_URL = API_URL.replace(/\/$/, '')
-  //       API_URL = API_URL.replace(/\/api\/arbitrage$/, '')
-
-  //       const [liveRes, historyRes] = await Promise.all([
-  //         axios.get(`${API_URL}/api/arbitrage`),
-  //         axios.get(`${API_URL}/api/history`)
-  //       ]);
-
-  //       setData(liveRes.data)
-  //       setHistoryData(historyRes.data)
-  //       setError(null)
-  //     }
-  //     catch (err) {
-  //       console.error(err)
-  //       setError('Failed to fetch data. Check the console !!!')
-  //     }
-  //   }
-
-  //   fetchData()
-
-  //   const interval = setInterval(fetchData, 3000)
-  //   return () => clearInterval(interval)
-  // }, [])
 
   if (!data && error)
     return <div className="screen-center error">{error}</div>
@@ -204,3 +179,82 @@ function ArbitrageCard({ scenario, label }) {
 }
 
 export default App;
+
+ // useEffect(() => {
+  //   let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001'
+  //   API_URL = API_URL.replace(/\/$/, '')
+
+  //   const fetchLive = async () => {
+  //     try {
+  //       const res = await axios.get(`${API_URL}/api/arbitrage`)
+
+  //       if (prevPricesRef.current) {
+  //         console.log(prevPricesRef.current)
+  //         const prev = prevPricesRef.current
+  //         const current = res.data.prices
+  //         console.log(current)
+
+  //         setTicks((prevTicks) => ({
+  //           binance: current.binance.ask > prev.binance.ask ? 'up' : (current.binance.ask < prev.binance.ask ? 'down' : prevTicks.binance),
+  //           kraken: current.kraken.ask > prev.kraken.ask ? 'up' : (current.kraken.ask < prev.kraken.ask ? 'down' : prevTicks.kraken)
+  //         }))
+  //       }
+
+
+  //       prevPricesRef.current = res.data.prices
+
+  //       setData(res.data)
+  //       setError(null)
+
+  //     } catch (err) {
+  //       console.error(err)
+  //       setError('Failed to fetch live data')
+  //     }
+  //   }
+
+  //   const fetchHistory = async () => {
+  //     try {
+  //       const res = await axios.get(`${API_URL}/api/history`)
+  //       setHistoryData(res.data)
+  //     } catch (err) {
+  //       console.error(err)
+  //     }
+  //   }
+
+  //   fetchLive()
+  //   fetchHistory()
+
+  //   const interval = setInterval(fetchLive, 3000)
+  //   return () => clearInterval(interval)
+  // }, [])
+
+  // useEffect(() => {
+
+  //   const fetchData = async () => {
+
+  //     try {
+  //       let API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001'
+
+  //       API_URL = API_URL.replace(/\/$/, '')
+  //       API_URL = API_URL.replace(/\/api\/arbitrage$/, '')
+
+  //       const [liveRes, historyRes] = await Promise.all([
+  //         axios.get(`${API_URL}/api/arbitrage`),
+  //         axios.get(`${API_URL}/api/history`)
+  //       ]);
+
+  //       setData(liveRes.data)
+  //       setHistoryData(historyRes.data)
+  //       setError(null)
+  //     }
+  //     catch (err) {
+  //       console.error(err)
+  //       setError('Failed to fetch data. Check the console !!!')
+  //     }
+  //   }
+
+  //   fetchData()
+
+  //   const interval = setInterval(fetchData, 3000)
+  //   return () => clearInterval(interval)
+  // }, [])
