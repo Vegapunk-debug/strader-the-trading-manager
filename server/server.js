@@ -17,6 +17,12 @@ const kraken = new ccxt.kraken({
 })
 
 app.get('/api/arbitrage', async (req, res) => {
+    const now = Date.now()
+    
+    if (cachedData && (now - lastFetchTime < 10000)) {
+        return res.json(cachedData)
+    }
+    
     try {
         const symbol = 'BTC/USDT'
 
