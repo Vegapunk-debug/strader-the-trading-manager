@@ -67,11 +67,14 @@ app.get('/api/arbitrage', async (req, res) => {
                 }
             }
         }
+        cachedData = responseData
+        lastFetchTime = now
         res.json(responseData)
 
     } catch (error) {
+        if (cachedData) return res.json(cachedData)
         console.error('Arbitrage Fetch Error:', error.message)
-        const status = error.message.includes('DDoS') ? 429 : 500;
+        const status = error.message.includes('DDoS') ? 429 : 500
         res.status(status).json({ error: error.message || 'Failed to fetch market data' })
     }
 });
