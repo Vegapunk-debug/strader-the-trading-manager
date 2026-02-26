@@ -7,28 +7,30 @@ const Port = process.env.PORT || 5001
 
 app.use(cors())
 
-const binance = new ccxt.binance({ 
+const binance = new ccxt.binance({
     enableRateLimit: true,
-    options: { 'defaultType': 'spot' } 
+    options: { 'defaultType': 'spot' }
 })
 
-const kraken = new ccxt.kraken({ 
-    enableRateLimit: true 
+const kraken = new ccxt.kraken({
+    enableRateLimit: true
 })
+
+let cachedData = null;
+let lastFetchTime = 0;
+const SYMBOL = 'BTC/USDT';
 
 app.get('/api/arbitrage', async (req, res) => {
     const now = Date.now()
-    
+
     if (cachedData && (now - lastFetchTime < 10000)) {
         return res.json(cachedData)
     }
-    
-    try {
-        const symbol = 'BTC/USDT'
 
+    try {
         const [binanceTicker, krakenTicker] = await Promise.all([
-            binance.fetchTicker(symbol),
-            kraken.fetchTicker(symbol)
+            binance.fetchTicker(SYMBOL),
+            kraken.fetchTicker(SYMBOL)
         ])
 
         const binanceAsk = binanceTicker.ask
@@ -83,8 +85,8 @@ app.get('/api/history', async (req, res) => {
     try {
         console.log("Fetching data...")
 
-        const binanceHistory = await binance.fetchOHLCV(symbol, '1h', undefined, 24)
-        const krakenHistory = await kraken.fetchOHLCV(symbol, '1h', undefined, 24)
+        const binanceHistory = await binance.fetchOHLCV(SYMBOL, '1h', undefined, 24)
+        const krakenHistory = await kraken.fetchOHLCV(SYMBOL, '1h', undefined, 24)
 
         // const graphData = []
         const graphData = binanceHistory.map((candleB, i) => {
